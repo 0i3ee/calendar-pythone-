@@ -12,6 +12,7 @@ import sys
 from connect import connect, close_connection
 from tkinter import messagebox
 from datetime import datetime
+import subprocess
 
 username_db = sys.argv[2] if len(sys.argv) > 2 else "Guest"
 
@@ -26,6 +27,7 @@ def get_current_location():
         return location.latitude, location.longitude
     else:
         return None
+
 
 
 
@@ -58,6 +60,9 @@ root.geometry("1366x815")
 root.title("Event")
 
 
+def logout():
+    root.destroy()
+    subprocess.run(["python", "login.py"], check=True)
 
 labeldate_font = ("Times New Roman", 50, 'bold')
 labeldate_font1 = ("Times New Roman", 30, 'bold')
@@ -94,8 +99,18 @@ lyear.place(x=600, y=70)
 
 count = 0  
 
+if len(sys.argv) > 1:
+        count = 0  
+        username_from_login = sys.argv[1]
+
+query_all = "SELECT UserID FROM users WHERE username ='" + username_from_login + "'"
+cursor.execute(query_all)
+result = cursor.fetchall()
+userID = str(result[0][0])
+
 def reloads():
         
+    
     if len(sys.argv) > 1:
         count = 0  
         username_from_login = sys.argv[1]
@@ -103,7 +118,7 @@ def reloads():
         luser.place(x=45, y=160)
 
         # Assuming cursor is a global variable and is connected to the database
-        query_all = "SELECT id, eventdate, Name FROM dataevents"
+        query_all = "SELECT id, eventdate, Name FROM dataevents where UserID = " + str(userID)
         cursor.execute(query_all)
         records_all = cursor.fetchall()
         myTree.delete(*myTree.get_children())
@@ -230,7 +245,7 @@ def save():
 
     
 
-    query_all = "SELECT id,eventdate, Name FROM dataevents"
+    query_all = "SELECT id, eventdate, Name FROM dataevents where UserID = "+ str(userID) 
     cursor.execute(query_all)
     records_all = cursor.fetchall()
 
@@ -273,7 +288,7 @@ button_Delete.place(x=550,y=320)
 button_Clear = customtkinter.CTkButton(root,text='Clear',font=labeldate_font1,fg_color="gray",command=Cleas) 
 button_Clear.place(x=550,y=370) 
 
-button_logout = customtkinter.CTkButton(root,text='logout',font=labeldate_font1,fg_color="red") 
+button_logout = customtkinter.CTkButton(root,text='logout',font=labeldate_font1,fg_color="red",command=logout) 
 button_logout.place(x=1000,y=720) 
 
 button_Exit = customtkinter.CTkButton(root,text='Exit',font=labeldate_font1,fg_color="red",command=quit) 

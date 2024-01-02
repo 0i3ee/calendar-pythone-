@@ -14,6 +14,7 @@ def cancel():
      app.destroy()
 
 
+
 def login():
     # Retrieve credentials from the database
     query = "SELECT username, password FROM users WHERE username = %s"
