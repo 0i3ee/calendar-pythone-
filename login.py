@@ -5,9 +5,14 @@ from connect import connect, close_connection
 import os
 
 
-app = ctk.CTk() 
-app.geometry("400x400") 
-app.title("login") 
+app = ctk.CTk()
+app.title("Login Form")
+screen_width = app.winfo_screenwidth()
+screen_height = app.winfo_screenheight()
+center_x = int((screen_width - 400) / 2)  # Adjust 400 as per your form's width
+center_y = int((screen_height - 300) / 2)  # Adjust 300 as per your form's height
+# Create the main window
+app.geometry(f"400x400+{center_x}+{center_y}")
 
 
 def cancel():
