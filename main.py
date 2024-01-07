@@ -18,6 +18,7 @@ username_db = sys.argv[2] if len(sys.argv) > 2 else "Guest"
 
 connection = connect()
 cursor = connection.cursor()
+count = 0  
 
 def get_current_location():
     geolocator = Nominatim(user_agent="my_geocoder")
@@ -97,7 +98,7 @@ labelyear.place(x=480, y=70)
 lyear = customtkinter.CTkLabel(root, font=labeldate_font, text="0000", fg_color="black")
 lyear.place(x=600, y=70)
 
-count = 0  
+
 
 if len(sys.argv) > 1:
         count = 0  
@@ -107,6 +108,18 @@ query_all = "SELECT UserID FROM users WHERE username ='" + username_from_login +
 cursor.execute(query_all)
 result = cursor.fetchall()
 userID = str(result[0][0])
+
+
+def Loaddata():
+    count = 0  
+    query_all = "SELECT id, eventdate, Name FROM dataevents where UserID = " + str(userID)
+    cursor.execute(query_all)
+    records_all = cursor.fetchall()
+    myTree.delete(*myTree.get_children())
+
+    for record in records_all:
+        myTree.insert(parent='', index='end', iid=count, text='', values=record)
+        count += 1
 
 def reloads():
         
@@ -118,14 +131,7 @@ def reloads():
         luser.place(x=45, y=160)
 
         # Assuming cursor is a global variable and is connected to the database
-        query_all = "SELECT id, eventdate, Name FROM dataevents where UserID = " + str(userID)
-        cursor.execute(query_all)
-        records_all = cursor.fetchall()
-        myTree.delete(*myTree.get_children())
-
-        for record in records_all:
-            myTree.insert(parent='', index='end', iid=count, text='', values=record)
-            count += 1
+        Loaddata()
 
 def Delete():
     record = cursor.fetchall()
@@ -235,7 +241,7 @@ def save():
     eventname = event_entry.get()
     eventdetail = textbox.get("1.0", "end-1c")
     evenrlocal = entry_location.get()
-    users = username_from_login
+    users = userID
 
     query = "insert into dataevents(eventdate,Name,Detail,Location,UserID) values(%s,%s,%s,%s,%s)"
     values = (myevel,eventname,eventdetail,evenrlocal,users)
@@ -245,16 +251,7 @@ def save():
 
     
 
-    query_all = "SELECT id, eventdate, Name FROM dataevents where UserID = "+ str(userID) 
-    cursor.execute(query_all)
-    records_all = cursor.fetchall()
-
-    myTree.delete(*myTree.get_children())
-
-    count = 0
-    for record in records_all:
-        myTree.insert(parent='', index='end', iid=count, text='', values=record)
-        count += 1
+    Loaddata()
 
     Cleas()
 
