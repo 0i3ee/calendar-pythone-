@@ -3,24 +3,60 @@ import tkinter.messagebox as tkmb
 from connect import connect, close_connection, close_cursor
 import subprocess
 import sys
+import os
+
+
+connection = connect()
+cursor = connection.cursor()
+count = 0
+new_name = ""
+
+username_db = sys.argv[2] if len(sys.argv) > 2 else "Guest"
+
+if len(sys.argv) > 1:
+        count = 0  
+        username_from_login = sys.argv[1]
+
+
+# query_username = "SELECT Username FROM users WHERE UserID =" + str(username_from_login)
+# cursor.execute(query_username)
+# result = cursor.fetchall()
+# usernameID = result[0][0]
+
 
 
 class RenamePasswordForm(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Rename and Change Password")
-        self.geometry("400x400")
-        self.wm_attributes("-toolwindow", 1)  # Remove minimize and maximize buttons, keep close button
+        self.geometry("400x500")
+        self.wm_attributes("-toolwindow", 1)  
         self.setup_ui()
+        self.center_window()
+
+    def center_window(self):
+        self.update_idletasks()
+        window_width = self.winfo_width()
+        window_height = self.winfo_height()
+
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        center_x = int((screen_width - 400) / 2) 
+        center_y = int((screen_height - 500) / 2)  
+
+        self.geometry(f"400x500+{center_x}+{center_y}")
+
+
 
     def show_message_box(self, message, title="Message"):
         tkmb.showinfo(parent=self, title=title, message=message)
 
+    
+
     def setup_ui(self):
         # Labels and Entry Widgets for Rename File
-        ctk.CTkLabel(self, text="Old File Name:").grid(row=0, column=0, padx=10, pady=10, sticky="w")
-        self.old_name_entry = ctk.CTkEntry(self)
-        self.old_name_entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        ctk.CTkLabel(self, text="Old File Name:   " + str(username_from_login) ).grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         ctk.CTkLabel(self, text="New File Name:").grid(row=1, column=0, padx=10, pady=10, sticky="w")
         self.new_name_entry = ctk.CTkEntry(self)
@@ -49,11 +85,16 @@ class RenamePasswordForm(ctk.CTk):
         change_both_button = ctk.CTkButton(self, text="Change Both", command=self.change_both)
         change_both_button.grid(row=6, column=0, columnspan=2, pady=10, sticky="ew")
 
+        change_both_button = ctk.CTkButton(self, text="return login", command=back)
+        change_both_button.grid(row=8, column=0, columnspan=2, pady=10, sticky="ew")
+
         # Adjust column weights for resizing
         self.columnconfigure(1, weight=1)
 
+  
+
     def rename_file(self):
-        old_name = self.old_name_entry.get()
+        old_name = username_from_login
         new_name = self.new_name_entry.get()
 
         try:
@@ -133,6 +174,9 @@ class RenamePasswordForm(ctk.CTk):
             close_cursor(cursor)
             close_connection(con)
 
+def back():
+        app.destroy()
+        subprocess.run(["python", "login.py"], check=True)
 
 if __name__ == "__main__":
     app = RenamePasswordForm()

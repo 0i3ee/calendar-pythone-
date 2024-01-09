@@ -12,7 +12,8 @@ import sys
 from connect import connect, close_connection
 from tkinter import messagebox
 from datetime import datetime
-import subprocess
+import subprocess   
+import os
 
 username_db = sys.argv[2] if len(sys.argv) > 2 else "Guest"
 
@@ -57,7 +58,11 @@ def refresh_calendar():
 
 
 root = customtkinter.CTk()
-root.geometry("1366x815")
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+center_x = int((screen_width - 1366) / 2) 
+center_y = int((screen_height - 815) / 2)  
+root.geometry(f"1366x815+{center_x}+{center_y}")
 root.title("Event")
 
 
@@ -68,7 +73,12 @@ def logout():
 
 def rename():
     root.destroy()
-    subprocess.run(["python", "configuser.py"], check=True)
+    senduser()
+
+
+def senduser():
+    os.system(f"python configuser.py {username_from_login}")
+    return username_from_login
 
 labeldate_font = ("Times New Roman", 50, 'bold')
 labeldate_font1 = ("Times New Roman", 30, 'bold')
@@ -109,10 +119,12 @@ if len(sys.argv) > 1:
         count = 0  
         username_from_login = sys.argv[1]
 
-query_all = "SELECT UserID FROM users WHERE username ='" + username_from_login + "'"
-cursor.execute(query_all)
-result = cursor.fetchall()
-userID = str(result[0][0])
+
+if (username_from_login != ""):
+    query_all = "SELECT UserID FROM users WHERE username ='" + username_from_login + "'"
+    cursor.execute(query_all)
+    result = cursor.fetchall()
+    userID = str(result[0][0])
 
 
 def Loaddata():
@@ -204,10 +216,7 @@ def updates():
 
         myTree.delete(*myTree.get_children())
 
-        count = 0
-        for record in records_all:
-            myTree.insert(parent='', index='end', iid=count, text='', values=record)
-            count += 1
+        Loaddata()
         Cleas()
 
 

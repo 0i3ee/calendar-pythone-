@@ -10,9 +10,8 @@ app = ctk.CTk()
 app.title("Login Form")
 screen_width = app.winfo_screenwidth()
 screen_height = app.winfo_screenheight()
-center_x = int((screen_width - 400) / 2)  # Adjust 400 as per your form's width
-center_y = int((screen_height - 300) / 2)  # Adjust 300 as per your form's height
-# Create the main window
+center_x = int((screen_width - 400) / 2) 
+center_y = int((screen_height - 300) / 2)  
 app.geometry(f"400x400+{center_x}+{center_y}")
 
 
