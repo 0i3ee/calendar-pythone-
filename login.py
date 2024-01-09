@@ -5,6 +5,7 @@ from connect import connect, close_connection
 import os
 
 
+
 app = ctk.CTk()
 app.title("Login Form")
 screen_width = app.winfo_screenwidth()

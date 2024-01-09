@@ -65,6 +65,11 @@ def logout():
     root.destroy()
     subprocess.run(["python", "login.py"], check=True)
 
+
+def rename():
+    root.destroy()
+    subprocess.run(["python", "configuser.py"], check=True)
+
 labeldate_font = ("Times New Roman", 50, 'bold')
 labeldate_font1 = ("Times New Roman", 30, 'bold')
 
@@ -129,6 +134,9 @@ def reloads():
         username_from_login = sys.argv[1]
         luser = customtkinter.CTkLabel(root, font=labeldate_font1, text=f"Username: {username_from_login}")
         luser.place(x=45, y=160)
+        button_rename = customtkinter.CTkButton(root,text='config user',font=labeldate_font1,fg_color="black",command=rename) 
+        button_rename.place(x=550,y=170) 
+
 
         # Assuming cursor is a global variable and is connected to the database
         Loaddata()

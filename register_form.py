@@ -32,14 +32,25 @@ def register():
         if gender not in valid_genders or region not in valid_regions:
             raise ValueError("Invalid gender or region value")
 
+        # Check if the username already exists
+        check_query = "SELECT * FROM users WHERE Username = %s"
+        cursor.execute(check_query, (username,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            tkinter.messagebox.showerror(title="Registration Error", message="Username already exists. Please choose a different username.")
+            return  # Stop the registration process if the username already exists
+
         # Insert data into the 'users' table
         insert_query = "INSERT INTO users (Username, Password, Gender, Email, Region) VALUES (%s, %s, %s, %s, %s)"
         data = (username, password, gender, email, region)
 
         cursor.execute(insert_query, data)
 
-        # Commit the changes and close the connection
+        # Commit the changes
         conn.commit()
+
+        # Close the connection
         close_cursor(cursor)
         close_connection(conn)
 
@@ -63,7 +74,7 @@ def register():
         tkinter.messagebox.showerror(title="Registration Error", message=f"Error: {err}")
     except ValueError as e:
         # Handle invalid gender or region values
-        app.messagebox.showerror(title="Registration Error", message=str(e))
+        tkinter.messagebox.showerror(title="Registration Error", message=str(e))
 
 def login():
     try:
